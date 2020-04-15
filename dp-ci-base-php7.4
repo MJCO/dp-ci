@@ -1,0 +1,50 @@
+FROM debian:buster
+
+ARG DEBIAN_FRONTEND=noninteractive
+# Get Debian up-to-date
+RUN apt-get update -yqq \
+    && apt-get install -yqq \
+        apt-transport-https \
+        apt-utils \
+        bsdmainutils \
+        ca-certificates \
+        curl \
+        git \
+        gnupg \
+        lsb-release \
+        python3-pip \
+        unzip \
+        wget
+
+RUN echo "deb https://packages.sury.org/php/ $(lsb_release -sc) main" | tee -a /etc/apt/sources.list.d/php.list
+RUN curl -L https://packages.sury.org/php/apt.gpg | apt-key add -
+
+RUN apt-get update -yqq \
+    && apt-get install -yqq \
+        php7.4 \
+        php7.4-cli \
+        php7.4-fpm \
+        php7.4-bz2 \
+        php7.4-curl \
+        php7.4-imagick \
+        php7.4-intl \
+        php7.4-json \
+        php7.4-gd \
+        php7.4-opcache \
+        php7.4-readline \
+        php7.4-tidy \
+        php7.4-xdebug \
+        php7.4-xml \
+        php7.4-xmlrpc \
+        php7.4-zip
+
+# Update PIP
+RUN python3 -m pip install -U pip
+
+# Install MkDocs pips.
+RUN python3 -m pip install mkdocs==1.0.4
+RUN python3 -m pip install mkdocs-material==4.6.3
+
+# Install Composer
+
+COPY --from=composer /usr/bin/composer /usr/bin/composer
